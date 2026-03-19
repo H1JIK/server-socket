@@ -85,7 +85,7 @@ void main() {
 	
 	int r_bytes;
 	do {
-		memset(recvbuf, 0, (int)strlen(recvbuf));
+		memset(recvbuf, 0, MAX_MSG);
 		r_bytes = recv(client_s, recvbuf, (int)MAX_MSG, 0);
 		if (r_bytes > 0) {
 			printf("%d BYTES RECEIVED!\n", r_bytes);
