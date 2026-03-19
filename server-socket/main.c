@@ -19,7 +19,7 @@ ADDRINFO hints;
 ADDRINFO* result;
 
 void errors_f(int n) {
-	if (n >= 3 && n < 7) closesocket(listen_s);
+	if (n >= 3) closesocket(listen_s);
 	if (n >= 2 && n < 5) freeaddrinfo(result);
 	if (n) WSACleanup();
 	switch (n) {
@@ -46,10 +46,6 @@ void errors_f(int n) {
 		break;
 	case 7:
 		printf("goodbye!\n");
-		closesocket(client_s);
-		break;
-	case 8:
-		printf("~err: shutdown client socket failed\n");
 		break;
 	}
 
@@ -114,6 +110,5 @@ void main() {
 		else errors_f(0);
 	} while (r_bytes > 0);
 
-	if (shutdown(client_s, SD_SEND) == SOCKET_ERROR) errors_f(8);
 	errors_f(7);	//очистка
 }
