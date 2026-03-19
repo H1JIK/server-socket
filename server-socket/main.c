@@ -58,7 +58,7 @@ void errors_f(int n) {
 
 void main() {
 	char sendbuf[MAX_PATH] = {0};
-	char recvbuf[MAX_MSG];
+	char recvbuf[MAX_MSG] = {0};
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
@@ -92,17 +92,22 @@ void main() {
 
 
 	do {
-		//memset(recvbuf, 0, MAX_MSG);
-		r_bytes = recv(client_s, recvbuf, (int)MAX_MSG, 0);
-		if (r_bytes > 0) {
-			printf("0 - exit\n");
+		memset(recvbuf, 0, MAX_MSG);
 
+		r_bytes = recv(client_s, recvbuf, (int)MAX_MSG, 0);
+
+		if (r_bytes > 0) {
+			if (recvbuf[0] != '\0') printf("MSG: %s\n", recvbuf);
+
+			printf("0 - exit\n");
 			printf("Enter the full path of the deleted file: ");
 			scanf("%s", sendbuf);
 			if (sendbuf[0] == '0')	errors_f(7);
 			else{
-				if (recvbuf) printf("MSG: %s\n", recvbuf);
-				send(client_s, sendbuf, (int)strlen(sendbuf), 0);
+				if (!send(client_s, sendbuf, (int)strlen(sendbuf), 0)) {
+					printf("~err: send failed\n");
+					continue;
+				}
 			}
 		}
 		else if (r_bytes == 0) printf("Connecton closed!\n");
