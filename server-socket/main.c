@@ -2,6 +2,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define PORT "2200"
 #define MAX_MSG 256
+#define MAX_PATH 64
 
 #include <windows.h>
 #include <winsock2.h>
@@ -56,7 +57,7 @@ void errors_f(int n) {
 }
 
 void main() {
-	const char* sendbuf = "hello from server";
+	char sendbuf[MAX_PATH] = {0};
 	char recvbuf[MAX_MSG];
 
 	memset(&hints, 0, sizeof(hints));
@@ -76,21 +77,33 @@ void main() {
 
 	freeaddrinfo(result);
 
-	if (listen(listen_s, 1) == SOCKET_ERROR) errors_f(5);	//блок. функция (синхронная), цикл, пока не подкл
+	if (listen(listen_s, 1) == SOCKET_ERROR) errors_f(5);
 
-	client_s = accept(listen_s, NULL, NULL);
+	printf("Waiting for connection...\n");
+
+	client_s = accept(listen_s, NULL, NULL);	//блок. функция (синхронная), цикл, пока не подкл
 	if (client_s == INVALID_SOCKET) errors_f(6);
+	printf("CONNECTING COMPLETE!\n");
+
 
 	closesocket(listen_s);
 	
 	int r_bytes;
+
+
 	do {
-		memset(recvbuf, 0, MAX_MSG);
+		//memset(recvbuf, 0, MAX_MSG);
 		r_bytes = recv(client_s, recvbuf, (int)MAX_MSG, 0);
 		if (r_bytes > 0) {
-			printf("%d BYTES RECEIVED!\n", r_bytes);
-			printf("MSG: %s\n", recvbuf);
-			send(client_s, sendbuf, (int)strlen(sendbuf), 0);
+			printf("0 - exit\n");
+
+			printf("Enter the full path of the deleted file: ");
+			scanf("%s", sendbuf);
+			if (sendbuf[0] == '0')	errors_f(7);
+			else{
+				if (recvbuf) printf("MSG: %s\n", recvbuf);
+				send(client_s, sendbuf, (int)strlen(sendbuf), 0);
+			}
 		}
 		else if (r_bytes == 0) printf("Connecton closed!\n");
 		else errors_f(0);
