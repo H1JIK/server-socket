@@ -73,7 +73,7 @@ void main() {
 
 	freeaddrinfo(result);
 
-	if (listen(listen_s, 1) == SOCKET_ERROR) errors_f(5);
+	if (listen(listen_s, 1) == SOCKET_ERROR) errors_f(5);	//переводит сокет в режим ожидания
 
 	printf("Waiting for connection...\n");
 
